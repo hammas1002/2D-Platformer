@@ -1,0 +1,6 @@
+
+
+interface IDamagable
+{
+    void ApplyDamage();
+}
