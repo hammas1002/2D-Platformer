@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CollectItems : MonoBehaviour
 {
+    public static event Action coinHit;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             GameManager.Instance.IncreaseCount();
+            coinHit?.Invoke();
             Destroy(this.gameObject);
         }
         
