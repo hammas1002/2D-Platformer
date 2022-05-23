@@ -6,11 +6,9 @@ using System;
 public class PlayerMovement : MonoBehaviour
 {
     private CharacterController2D characterController;
+    private PlayerBash playerBash;
     private Animator playerAnimator;
-
-    
-
-
+    Rigidbody2D rb;
     //................
     [Header("Fields")]
     float horizontal=0;
@@ -18,27 +16,42 @@ public class PlayerMovement : MonoBehaviour
     float moveSpeed = 40f;
     bool jump = true;
     bool crouch = false;
-    
+    bool isBashing = false;
+
+
     // Start is called before the first frame update
     void Awake()
     {
-        characterController = FindObjectOfType<CharacterController2D>();
+        characterController = GetComponent<CharacterController2D>();
+        rb = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponentInChildren<Animator>();
+        playerBash = GetComponent<PlayerBash>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal")*moveSpeed;
+        
+        horizontal = Input.GetAxis("Horizontal")*moveSpeed;
+        print("Horizontal" + horizontal);
         ControlAnimations();
         GetInputs();
+        playerBash.Bash();
+        isBashing = playerBash.IsBashing;
+        
         
     }
 
     private void FixedUpdate()
     {
-        characterController.Move(horizontal*Time.deltaTime, crouch, jump); 
-        jump = false;
+        
+        if (!isBashing)
+        {
+            characterController.Move(horizontal == 0 ? rb.velocity.x : horizontal * Time.fixedDeltaTime, crouch, jump);
+            jump = false;
+        }
+        
+
     }
 
     private void GetInputs()
